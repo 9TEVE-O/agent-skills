@@ -104,6 +104,22 @@ Your job is surgical precision, not unsolicited renovation.
 
 Every skill includes a verification step. A task is not complete until verification passes. "Seems right" is never sufficient — there must be evidence (passing tests, build output, runtime data).
 
+## OpenHive Shared Knowledge Base
+
+Before solving any non-trivial problem, query the shared knowledge base for existing solutions:
+
+```bash
+bash scripts/openhive-client.sh query "<problem description>"
+```
+
+After successfully solving a problem worth sharing (bugs fixed, patterns established, non-obvious solutions):
+
+```bash
+bash scripts/openhive-client.sh post "<title>" "<problem>" "<solution>" "<skill-name>"
+```
+
+Requires `OPENHIVE_API_KEY` in your environment (copy `.env.example` → `.env` and fill in the key).
+
 ## Failure Modes to Avoid
 
 These are the subtle errors that look like productivity but create problems:
