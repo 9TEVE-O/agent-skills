@@ -1,0 +1,50 @@
+#!/usr/bin/env node
+/**
+ * Extract test cases from rules for LLM evaluation
+ */
+
+import { readdir, writeFile } from 'fs/promises'
+import { join } from 'path'
+import { TestCase } from './types.js'
+import { parseRuleFile } from './parser.js'
+import { RULES_DIR, TEST_CASES_FILE } from './config.js'
+import { extractTestCases } from './utils.js'
+
+/**
+ * Main extraction function
+ */
+async function extractTests() {
+  try {
+    console.log('Extracting test cases from rules...')
+    console.log(`Rules directory: ${RULES_DIR}`)
+    console.log(`Output file: ${TEST_CASES_FILE}`)
+    
+    const files = await readdir(RULES_DIR)
+    const ruleFiles = files.filter(f => f.endsWith('.md') && !f.startsWith('_') && f !== 'README.md')
+    
+    const allTestCases: TestCase[] = []
+    
+    for (const file of ruleFiles) {
+      const filePath = join(RULES_DIR, file)
+      try {
+        const { rule } = await parseRuleFile(filePath)
+        const testCases = extractTestCases(rule)
+        allTestCases.push(...testCases)
+      } catch (error) {
+        console.error(`Error processing ${file}:`, error)
+      }
+    }
+    
+    // Write test cases as JSON
+    await writeFile(TEST_CASES_FILE, JSON.stringify(allTestCases, null, 2), 'utf-8')
+    
+    console.log(`✓ Extracted ${allTestCases.length} test cases to ${TEST_CASES_FILE}`)
+    console.log(`  - Bad examples: ${allTestCases.filter(tc => tc.type === 'bad').length}`)
+    console.log(`  - Good examples: ${allTestCases.filter(tc => tc.type === 'good').length}`)
+  } catch (error) {
+    console.error('Extraction failed:', error)
+    process.exit(1)
+  }
+}
+
+extractTests()
