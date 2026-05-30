@@ -122,35 +122,62 @@ export async function parseRuleFile(
       continue
     }
 
-    // Example label (Incorrect, Correct, Example, Usage, Implementation, etc.)
-    // Match pattern: **Label:** or **Label (description):** at end of line
-    // This distinguishes example labels from inline bold text like "**Trade-off:** some text"
-    const labelMatch = line.match(/^\*\*([^:]+?):\*?\*?$/)
-    if (labelMatch) {
-      // Save previous example if it exists
-      if (currentExample) {
-        if (additionalText.length > 0) {
-          currentExample.additionalText = additionalText.join('\n\n')
-          additionalText = []
-        }
-        examples.push(currentExample)
+    // Example label.
+    // Supported formats:
+    //   **Incorrect:**
+    //   **Correct (description):**
+    //   **Bad: description**
+    //   **Good: description**
+    // This intentionally only accepts known example-label prefixes so fully-bold
+    // non-example lines do not get treated as examples.
+    const boldLabelMatch = line.match(/^\*\*(.+?)\*\*$/)
+    if (boldLabelMatch) {
+      let fullLabel = boldLabelMatch[1].trim()
+      if (fullLabel.endsWith(':')) {
+        fullLabel = fullLabel.slice(0, -1).trim()
       }
-      afterCodeBlock = false
-      hasCodeBlockForCurrentExample = false
 
-      const fullLabel = labelMatch[1].trim()
-      // Try to extract description from parentheses if present (handles simple cases)
-      // For nested parentheses like "Incorrect (O(n) per lookup)", we keep the full label
-      const descMatch = fullLabel.match(
-        /^([A-Za-z]+(?:\s+[A-Za-z]+)*)\s*\(([^()]+)\)$/
+      const labelStartMatch = fullLabel.match(
+        /^(Bad|Good|Incorrect|Correct|Wrong|Example|Usage|Implementation)\b(.*)$/i
       )
-      currentExample = {
-        label: descMatch ? descMatch[1].trim() : fullLabel,
-        description: descMatch ? descMatch[2].trim() : undefined,
-        code: '',
-        language: codeBlockLanguage,
+
+      if (labelStartMatch) {
+        // Save previous example if it exists
+        if (currentExample) {
+          if (additionalText.length > 0) {
+            currentExample.additionalText = additionalText.join('\n\n')
+            additionalText = []
+          }
+          examples.push(currentExample)
+        }
+        afterCodeBlock = false
+        hasCodeBlockForCurrentExample = false
+
+        const keyword = labelStartMatch[1].trim()
+        const remainder = labelStartMatch[2].trim()
+        let parsedLabel = keyword
+        let parsedDescription: string | undefined = undefined
+
+        if (remainder.startsWith(':')) {
+          parsedDescription = remainder.slice(1).trim() || undefined
+        } else {
+          const parenMatch = remainder.match(/^\(([^()]+)\)$/)
+          if (parenMatch) {
+            parsedDescription = parenMatch[1].trim()
+          } else if (remainder.length > 0) {
+            // Preserve multi-word labels such as "Correct usage".
+            parsedLabel = fullLabel
+          }
+        }
+
+        currentExample = {
+          label: parsedLabel,
+          description: parsedDescription,
+          code: '',
+          language: codeBlockLanguage,
+        }
+        continue
       }
-      continue
     }
 
     // Reference links
