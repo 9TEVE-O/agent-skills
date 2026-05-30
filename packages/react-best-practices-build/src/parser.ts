@@ -1,5 +1,8 @@
 /**
  * Parser for rule markdown files
+ *
+ * Accepts both short example labels and descriptive labels such as
+ * `**Bad: description**` and `**Good: description**`.
  */
 
 import { readFile } from 'fs/promises'
