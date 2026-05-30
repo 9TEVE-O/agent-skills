@@ -86,10 +86,10 @@ export async function parseRuleFile(
   for (let i = titleLine + 1; i < ruleLines.length; i++) {
     const line = ruleLines[i]
 
-    // Impact line
+    // Impact line — handles both **Impact: LEVEL** and **Impact:** LEVEL
     if (line.includes('**Impact:')) {
       const match = line.match(
-        /\*\*Impact:\s*(\w+(?:-\w+)?)\s*(?:\(([^)]+)\))?/i
+        /\*\*Impact:\*?\*?\s*(\w+(?:-\w+)?)\s*(?:\(([^)]+)\))?/i
       )
       if (match) {
         impact = match[1].toUpperCase().replace(/-/g, '-') as ImpactLevel
