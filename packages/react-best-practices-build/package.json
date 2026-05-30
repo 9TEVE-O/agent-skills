@@ -13,7 +13,8 @@
     "validate": "tsx src/validate.ts",
     "extract-tests": "tsx src/extract-tests.ts",
     "migrate": "tsx src/migrate.ts",
-    "dev": "pnpm build && pnpm validate"
+    "dev": "pnpm build && pnpm validate",
+    "test": "vitest run"
   },
   "keywords": [
     "react",
@@ -26,6 +27,7 @@
   "devDependencies": {
     "@types/node": "^20.0.0",
     "tsx": "^4.7.0",
-    "typescript": "^5.3.0"
+    "typescript": "^5.3.0",
+    "vitest": "^1.6.1"
   }
 }

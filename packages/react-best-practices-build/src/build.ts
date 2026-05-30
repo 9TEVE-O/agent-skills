@@ -19,7 +19,7 @@ const buildAll = args.includes('--all')
 /**
  * Increment a semver-style version string (e.g., "0.1.0" -> "0.1.1", "1.0" -> "1.1")
  */
-function incrementVersion(version: string): string {
+export function incrementVersion(version: string): string {
   const parts = version.split('.').map(Number)
   // Increment the last part
   parts[parts.length - 1]++
@@ -29,7 +29,7 @@ function incrementVersion(version: string): string {
 /**
  * Generate markdown from rules
  */
-function generateMarkdown(
+export function generateMarkdown(
   sections: Section[],
   metadata: {
     version: string
@@ -317,4 +317,8 @@ async function build() {
   }
 }
 
-build()
+// Only run CLI when executed directly (not when imported as a module in tests)
+const isMain = process.argv[1] && process.argv[1].endsWith('build.ts')
+if (isMain) {
+  build()
+}

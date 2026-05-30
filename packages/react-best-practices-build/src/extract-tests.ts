@@ -12,7 +12,7 @@ import { RULES_DIR, TEST_CASES_FILE } from './config.js'
 /**
  * Extract test cases from a rule
  */
-function extractTestCases(rule: Rule): TestCase[] {
+export function extractTestCases(rule: Rule): TestCase[] {
   const testCases: TestCase[] = []
   
   rule.examples.forEach((example, index) => {
@@ -74,4 +74,8 @@ async function extractTests() {
   }
 }
 
-extractTests()
+// Only run CLI when executed directly (not when imported as a module in tests)
+const isMain = process.argv[1] && process.argv[1].endsWith('extract-tests.ts')
+if (isMain) {
+  extractTests()
+}
