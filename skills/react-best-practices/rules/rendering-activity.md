@@ -9,18 +9,29 @@ tags: rendering, activity, visibility, state-preservation
 
 Use React's `<Activity>` to preserve state/DOM for expensive components that frequently toggle visibility.
 
-**Usage:**
+**Incorrect (unmounts and remounts on every toggle):**
+
+```tsx
+function Dropdown({ isOpen }: { isOpen: boolean }) {
+  // ExpensiveMenu is destroyed and rebuilt each time isOpen flips
+  return <div>{isOpen && <ExpensiveMenu />}</div>
+}
+```
+
+**Correct (keeps mounted, hides instead):**
 
 ```tsx
 import { Activity } from 'react'
 
-function Dropdown({ isOpen }: Props) {
+function Dropdown({ isOpen }: { isOpen: boolean }) {
   return (
-    <Activity mode={isOpen ? 'visible' : 'hidden'}>
-      <ExpensiveMenu />
-    </Activity>
+    <div>
+      <Activity mode={isOpen ? 'visible' : 'hidden'}>
+        <ExpensiveMenu />
+      </Activity>
+    </div>
   )
 }
 ```
 
-Avoids expensive re-renders and state loss.
+Avoids expensive re-renders and state loss when toggling visibility.

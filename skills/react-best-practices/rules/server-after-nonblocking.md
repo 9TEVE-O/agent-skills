@@ -1,11 +1,11 @@
 ---
-category: server
-tags: [server, next.js, performance, async]
+title: Use after() for Non-Blocking Post-Response Work
+impact: MEDIUM
+impactDescription: prevents post-response tasks from delaying the response
+tags: server, next.js, performance, async
 ---
 
 ## Use after() for Non-Blocking Post-Response Work
-
-**Impact: MEDIUM**
 
 Use Next.js `after()` to schedule work that should happen after the response is sent, such as logging, analytics, or cache invalidation. This prevents non-critical work from blocking the response and improves perceived performance.
 

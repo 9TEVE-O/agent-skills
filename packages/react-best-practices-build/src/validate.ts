@@ -52,7 +52,7 @@ function validateRule(rule: Rule, file: string): ValidationError[] {
     
     if (codeExamples.length === 0) {
       errors.push({ file, ruleId: rule.id, message: 'Missing code examples' })
-    } else if (!hasBad && !hasGood) {
+    } else if (!hasBad || !hasGood) {
       errors.push({ file, ruleId: rule.id, message: 'Missing bad/incorrect or good/correct examples' })
     }
   }
