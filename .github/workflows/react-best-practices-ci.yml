@@ -2,7 +2,9 @@ name: React Best Practices CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - claude/react-best-practices-ci-PhX00
     paths:
       - 'skills/react-best-practices/**'
       - 'packages/react-best-practices-build/**'
