@@ -1,0 +1,17 @@
+{
+  "name": "central",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "proxy": "bun run scripts/proxy.ts",
+    "example:basic": "bun run examples/basic.ts",
+    "example:subagents": "bun run examples/subagents.ts",
+    "example:with-proxy": "bun run examples/with-proxy.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.0.0"
+  }
+}
